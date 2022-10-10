@@ -1,18 +1,16 @@
 import { json, LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { Fragment } from "react";
 
 export async function loader({ request }: LoaderArgs) {
   const { searchParams } = new URL(request.url);
 
-  const url = searchParams.get("url") as string;
-  const title = searchParams.get("title") as string;
-  const text = searchParams.get("text") as string;
-
-  return json({
-    url,
-    title,
-    text,
-  });
+  return json(
+    Array.from(searchParams.entries()).reduce((values, [key, value]) => {
+      values[key] = value;
+      return values;
+    }, {} as Record<string, string>)
+  );
 }
 
 export default function Mark() {
@@ -21,7 +19,15 @@ export default function Mark() {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
       <h1>ribeirlabs / marked</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      {Object.keys(data).map((key) => (
+        <Fragment key={key}>
+          <p>
+            <b>{key}:</b>
+            <br />
+            <span>{data[key]}</span>
+          </p>
+        </Fragment>
+      ))}
     </div>
   );
 }
