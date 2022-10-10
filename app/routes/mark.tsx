@@ -1,23 +1,27 @@
-import { ActionArgs, json } from "@remix-run/node";
-import { useActionData } from "@remix-run/react";
+import { json, LoaderArgs } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 
-export async function action({ request }: ActionArgs) {
-  const data = await request.formData();
+export async function loader({ request }: LoaderArgs) {
+  const { searchParams } = new URL(request.url);
 
-  const link = data.get("link") as string;
+  const url = searchParams.get("url") as string;
+  const title = searchParams.get("title") as string;
+  const text = searchParams.get("text") as string;
 
   return json({
-    link,
+    url,
+    title,
+    text,
   });
 }
 
 export default function Mark() {
-  const data = useActionData<typeof action>();
+  const data = useLoaderData<typeof loader>();
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
       <h1>ribeirlabs / marked</h1>
-      <p>Link: {data?.link}</p>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
 }
