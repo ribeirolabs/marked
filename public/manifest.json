@@ -1,0 +1,57 @@
+{
+  "name": "ribeirolabs / marked",
+  "short_name": "r / marked",
+  "display": "standalone",
+  "background_color": "#138cd2",
+  "theme_color": "#138cd2",
+  "description": "Bookmark and manage tweets",
+  "start_url": "/",
+  "scope": "/",
+  "orientation": "portrait",
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://marked.ribeiro.app"
+    }
+  ],
+  "share_target": {
+    "action": "/bookmark",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "url": "link"
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+rmarked",
+      "url": "/%s"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/images/manifest-icon-192.maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/manifest-icon-192.maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/images/manifest-icon-512.maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/manifest-icon-512.maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
