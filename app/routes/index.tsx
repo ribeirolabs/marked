@@ -15,7 +15,7 @@ export default function Index() {
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
-      <h1>ribeirlabs / marked</h1>
+      <h1 className="font-bold text-xl">ribeirlabs / marked</h1>
       <pre>{JSON.stringify(data, null, 2)}</pre>
 
       <h2>Latest</h2>

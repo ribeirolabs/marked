@@ -8,6 +8,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import { ClipboardListener } from "./components/ClipboardListener";
+import styles from "./styles/app.css";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -23,6 +24,10 @@ export const links: LinksFunction = () => [
   {
     rel: "icon",
     href: "/images/favicon.png",
+  },
+  {
+    rel: "stylesheet",
+    href: styles,
   },
 ];
 
