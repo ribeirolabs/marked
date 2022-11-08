@@ -1,3 +1,5 @@
+const { flatRoutes } = require("remix-flat-routes");
+
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
   serverBuildTarget: "vercel",
@@ -10,4 +12,9 @@ module.exports = {
   // assetsBuildDirectory: "public/build",
   // serverBuildPath: "api/index.js",
   // publicPath: "/build/",
+  async routes(defineRoutes) {
+    return flatRoutes("routes", defineRoutes, {
+      ignoredRouteFiles: [],
+    });
+  },
 };
