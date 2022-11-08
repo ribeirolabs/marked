@@ -12,6 +12,8 @@ export const serverSchema = z.object({
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   SESSION_SECRET: z.string(),
+  LINK_PREVIEW_KEY: z.string(),
+  LINK_PREVIEW_URL: z.string(),
 });
 
 export const formatErrors = (errors: ZodFormattedError<Map<string, string>>) =>
