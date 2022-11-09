@@ -7,12 +7,14 @@ const searchSchema = z.object({
   link: z.string().url(),
 });
 
-const previewSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  image: z.string().url(),
-  url: z.string().url(),
-});
+const previewSchema = z
+  .object({
+    title: z.string(),
+    description: z.string(),
+    image: z.string().url(),
+    url: z.string().url(),
+  })
+  .nullish();
 
 export type PreviewResponse = z.infer<typeof previewSchema>;
 
@@ -40,12 +42,7 @@ export async function loader({ request }: LoaderArgs) {
   const parsedResponse = previewSchema.safeParse(await response.json());
 
   if (parsedResponse.success === false) {
-    return json(
-      {
-        error: parsedResponse.error,
-      },
-      500
-    );
+    return json({});
   }
 
   return json({
