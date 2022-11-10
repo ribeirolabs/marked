@@ -14,7 +14,8 @@ import { z } from "zod";
 
 export async function loader({ request }: LoaderArgs) {
   const searchSchema = z.object({
-    url: z.string().url(),
+    url: z.string().url().nullish(),
+    text: z.string().nullish(),
   });
 
   const responseSchema = z.object({
@@ -41,10 +42,20 @@ export async function loader({ request }: LoaderArgs) {
     );
   }
 
+  const url = search.data.url || search.data.text || "";
+
+  if (/http/.test(url) === false) {
+    throw json({
+      error: {
+        message: `Invalid URL: ${url}`,
+      },
+    });
+  }
+
   const requestUrl = new URL(env.LINK_PREVIEW_URL);
 
   requestUrl.searchParams.set("key", env.LINK_PREVIEW_KEY);
-  requestUrl.searchParams.set("q", decodeURIComponent(search.data.url));
+  requestUrl.searchParams.set("q", decodeURIComponent(url));
 
   const response = await fetch(requestUrl);
   const parsedResponse = previewSchema.safeParse(await response.json());
@@ -55,7 +66,7 @@ export async function loader({ request }: LoaderArgs) {
     return json(
       responseSchema.parse({
         mark: {
-          link: search.data.url,
+          link: url,
         },
       })
     );
