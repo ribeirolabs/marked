@@ -6,13 +6,13 @@ export function ClipboardListener() {
 
   useEffect(() => {
     async function onPaste(event: ClipboardEvent) {
-      const link = event.clipboardData?.getData("text");
+      const url = event.clipboardData?.getData("text");
 
-      if (link == null || link === "") {
+      if (url == null || url === "") {
         return;
       }
 
-      navigate(`/mark?${new URLSearchParams([["link", link]])}`);
+      navigate(`/mark?${new URLSearchParams([["url", url]])}`);
     }
 
     document.addEventListener("paste", onPaste);

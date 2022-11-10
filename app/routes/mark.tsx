@@ -7,15 +7,14 @@ import {
   json,
   redirect,
   type LoaderArgs,
-  ErrorBoundaryComponent,
 } from "@remix-run/node";
 import { useActionData, useCatch, useLoaderData } from "@remix-run/react";
-import { CatchBoundaryComponent } from "@remix-run/react/dist/routeModules";
+import { type CatchBoundaryComponent } from "@remix-run/react/dist/routeModules";
 import { z } from "zod";
 
 export async function loader({ request }: LoaderArgs) {
   const searchSchema = z.object({
-    link: z.string().url(),
+    url: z.string().url(),
   });
 
   const responseSchema = z.object({
@@ -41,12 +40,12 @@ export async function loader({ request }: LoaderArgs) {
     );
   }
 
-  const url = new URL(env.LINK_PREVIEW_URL);
+  const requestUrl = new URL(env.LINK_PREVIEW_URL);
 
-  url.searchParams.set("key", env.LINK_PREVIEW_KEY);
-  url.searchParams.set("q", decodeURIComponent(search.data.link));
+  requestUrl.searchParams.set("key", env.LINK_PREVIEW_KEY);
+  requestUrl.searchParams.set("q", decodeURIComponent(search.data.url));
 
-  const response = await fetch(url);
+  const response = await fetch(requestUrl);
   const parsedResponse = previewSchema.safeParse(await response.json());
 
   if (parsedResponse.success === false) {
@@ -55,24 +54,17 @@ export async function loader({ request }: LoaderArgs) {
     return json(
       responseSchema.parse({
         mark: {
-          link: search.data.link,
+          link: search.data.url,
         },
       })
     );
   }
 
-  const { title, description, image, url: link } = parsedResponse.data;
-
   server.close();
 
   return json(
     responseSchema.parse({
-      mark: {
-        title,
-        description,
-        image,
-        link,
-      },
+      mark: parsedResponse.data,
     })
   );
 }
@@ -192,7 +184,7 @@ export default function Mark() {
                 name="link"
                 className="input input-bordered w-full"
                 readOnly
-                value={data.mark.link}
+                value={data.mark.url}
               />
             </div>
 

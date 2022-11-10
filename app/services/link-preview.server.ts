@@ -31,14 +31,14 @@ export const server = setupServer(
     const safeResponse = previewSchema.safeParse(response);
 
     if (safeResponse.success === false) {
-      console.log(safeResponse.error);
-      const response = {
+      console.log(response, safeResponse.error);
+      const a = {
         url,
       };
 
-      global.cache[req.url.toString()] = response;
+      global.cache[req.url.toString()] = a;
 
-      return res(ctx.json(response));
+      return res(ctx.json(a));
     }
 
     global.cache[req.url.toString()] = safeResponse.data;
