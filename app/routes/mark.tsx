@@ -34,6 +34,7 @@ export async function loader({ request }: LoaderArgs) {
 
     throw json(
       {
+        url: request.url,
         error: search.error,
       },
       400
