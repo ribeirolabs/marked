@@ -20,7 +20,7 @@
     "params": {
       "title": "title",
       "text": "text",
-      "url": "link"
+      "link": "url"
     }
   },
   "protocol_handlers": [
