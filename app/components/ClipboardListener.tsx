@@ -8,7 +8,7 @@ export function ClipboardListener() {
     async function onPaste(event: ClipboardEvent) {
       const link = event.clipboardData?.getData("text");
 
-      if (link == null) {
+      if (link == null || link === "") {
         return;
       }
 

@@ -11,15 +11,15 @@ import {
 import { useActionData, useLoaderData } from "@remix-run/react";
 import { z } from "zod";
 
-const searchSchema = z.object({
-  link: z.string().url(),
-});
-
-const responseSchema = z.object({
-  mark: previewSchema.omit({ url: true }).merge(searchSchema),
-});
-
 export async function loader({ request }: LoaderArgs) {
+  const searchSchema = z.object({
+    link: z.string().url(),
+  });
+
+  const responseSchema = z.object({
+    mark: previewSchema.omit({ url: true }).merge(searchSchema),
+  });
+
   await requireUser(request);
 
   server.listen();

@@ -31,6 +31,7 @@ export const server = setupServer(
     const safeResponse = previewSchema.safeParse(response);
 
     if (safeResponse.success === false) {
+      console.log(safeResponse.error);
       const response = {
         url,
       };
@@ -40,8 +41,8 @@ export const server = setupServer(
       return res(ctx.json(response));
     }
 
-    global.cache[req.url.toString()] = safeResponse;
+    global.cache[req.url.toString()] = safeResponse.data;
 
-    return res(ctx.json(safeResponse));
+    return res(ctx.json(safeResponse.data));
   })
 );
