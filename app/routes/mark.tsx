@@ -150,8 +150,6 @@ export default function Mark() {
   const data = useLoaderData<typeof loader>();
   const actionResponse = useActionData<typeof action>();
 
-  console.log(data);
-
   return (
     <div className="p-4">
       <h1>ribeirlabs / marked</h1>
@@ -161,7 +159,7 @@ export default function Mark() {
       <form className="w-full" action="" method="post">
         <h2 className="font-bold text-3xl text-red">New Mark</h2>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-4">
           <div className="grid gap-4">
             <div className="form-control">
               <label className="label">
