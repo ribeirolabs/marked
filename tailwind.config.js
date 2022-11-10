@@ -1,23 +1,25 @@
-/** @type {import('tailwindcss').Config} */
-const theme = require("daisyui/src/colors/themes")["[data-theme=emerald]"];
+const theme = require("daisyui/src/colors/themes")["[data-theme=halloween]"];
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   mode: "jit",
   content: ["./app/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    // fontFamily: {
-    //   sans: "Rubik, sans-serif",
-    // },
-    extend: {},
+    extend: {
+      borderColor: {
+        DEFAULT: "#333",
+      },
+    },
   },
   plugins: [require("daisyui")],
   daisyui: {
     themes: [
       {
-        emerald: {
+        dark: {
           ...theme,
           primary: "#138cd2",
           "primary-content": "white",
+          "--rounded-box": "0.5rem",
           // secondary: theme.neutral,
           // "secondary-content": theme["neutral-content"],
           // accent: "#facc15",

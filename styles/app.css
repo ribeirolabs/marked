@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "JetBrains Mono", monospace;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply font-black no-animation;
+  }
+}
+
+@layer utilities {
+  .font-bold {
+    @apply font-black;
+  }
+}

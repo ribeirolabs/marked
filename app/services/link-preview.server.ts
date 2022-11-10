@@ -1,14 +1,7 @@
+import { markSchema } from "@/utils/link-preview";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
-import { z } from "zod";
 import { env } from "./env.server";
-
-export const previewSchema = z.object({
-  title: z.string().nullish(),
-  description: z.string().nullish(),
-  image: z.string().nullish(),
-  url: z.string(),
-});
 
 declare global {
   var cache: Record<string, any>;
@@ -28,7 +21,7 @@ export const server = setupServer(
     }
 
     const response = await (await ctx.fetch(req)).json();
-    const safeResponse = previewSchema.safeParse(response);
+    const safeResponse = markSchema.safeParse(response);
 
     if (safeResponse.success === false) {
       console.log(response, safeResponse.error);

@@ -1,10 +1,8 @@
-import { requireAuth } from "@/services/auth.server";
 import { prisma } from "@/services/db.server";
-import { getUserBySession, requireUser } from "@/services/user.server";
+import { requireUser } from "@/services/user.server";
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { useEffect, useState } from "react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireUser(request);
@@ -38,12 +36,9 @@ export async function loader({ request }: LoaderArgs) {
 export default function Index() {
   const { marks } = useLoaderData<typeof loader>();
 
-  const [show, setShow] = useState(false);
-
   return (
     <div className="p-4">
-      <span>ribeirlabs / marked</span>
-      <h2 className="font-bold text-xl my-2">Latest</h2>
+      <h2 className="font-bold text-xl">Latest</h2>
 
       <div className="max-w-lg grid gap-3">
         {marks.map((mark) => {
@@ -77,6 +72,8 @@ export default function Index() {
           );
         })}
       </div>
+
+      <Outlet />
     </div>
   );
 }
