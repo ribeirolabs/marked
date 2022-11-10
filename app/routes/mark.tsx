@@ -7,8 +7,10 @@ import {
   json,
   redirect,
   type LoaderArgs,
+  ErrorBoundaryComponent,
 } from "@remix-run/node";
-import { useActionData, useLoaderData } from "@remix-run/react";
+import { useActionData, useCatch, useLoaderData } from "@remix-run/react";
+import { CatchBoundaryComponent } from "@remix-run/react/dist/routeModules";
 import { z } from "zod";
 
 export async function loader({ request }: LoaderArgs) {
@@ -144,6 +146,8 @@ export default function Mark() {
   const data = useLoaderData<typeof loader>();
   const actionResponse = useActionData<typeof action>();
 
+  console.log(data);
+
   return (
     <div className="p-4">
       <h1>ribeirlabs / marked</h1>
@@ -244,3 +248,15 @@ export default function Mark() {
     </div>
   );
 }
+
+export const CatchBoundary: CatchBoundaryComponent = () => {
+  const caught = useCatch();
+
+  return (
+    <div className="p-4">
+      <pre className="p-4 bg-error-content text-white">
+        {JSON.stringify(caught, null, 2)}
+      </pre>
+    </div>
+  );
+};
