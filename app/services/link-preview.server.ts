@@ -7,7 +7,7 @@ export const previewSchema = z.object({
   title: z.string().nullish(),
   description: z.string().nullish(),
   image: z.string().nullish(),
-  url: z.string().nullish(),
+  url: z.string(),
 });
 
 declare global {
@@ -28,7 +28,17 @@ export const server = setupServer(
     }
 
     const response = await (await ctx.fetch(req)).json();
-    const safeResponse = previewSchema.parse(response);
+    const safeResponse = previewSchema.safeParse(response);
+
+    if (safeResponse.success === false) {
+      const response = {
+        url,
+      };
+
+      global.cache[req.url.toString()] = response;
+
+      return res(ctx.json(response));
+    }
 
     global.cache[req.url.toString()] = safeResponse;
 

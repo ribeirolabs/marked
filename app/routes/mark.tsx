@@ -2,9 +2,13 @@ import { prisma } from "@/services/db.server";
 import { env } from "@/services/env.server";
 import { previewSchema, server } from "@/services/link-preview.server";
 import { requireUser } from "@/services/user.server";
-import { ActionArgs, json, redirect, type LoaderArgs } from "@remix-run/node";
+import {
+  type ActionArgs,
+  json,
+  redirect,
+  type LoaderArgs,
+} from "@remix-run/node";
 import { useActionData, useLoaderData } from "@remix-run/react";
-import { Fragment } from "react";
 import { z } from "zod";
 
 const searchSchema = z.object({
@@ -16,7 +20,6 @@ const responseSchema = z.object({
 });
 
 export async function loader({ request }: LoaderArgs) {
-  console.log("LOADER");
   await requireUser(request);
 
   server.listen();
@@ -42,7 +45,6 @@ export async function loader({ request }: LoaderArgs) {
   url.searchParams.set("q", decodeURIComponent(search.data.link));
 
   const response = await fetch(url);
-
   const parsedResponse = previewSchema.safeParse(await response.json());
 
   if (parsedResponse.success === false) {
