@@ -1,27 +1,29 @@
 import { requireAuth } from "@/services/auth.server";
 import { prisma } from "@/services/db.server";
-import { env } from "@/services/env.server";
-import { server } from "@/services/link-preview.server";
-import { requireUser } from "@/services/user.server";
-import { markSchema, markUrlSchema } from "@/utils/link-preview";
+import { type LinkPreviewResponse } from "@/utils/link-preview";
 import {
   type ActionArgs,
   json,
   redirect,
   type LoaderArgs,
 } from "@remix-run/node";
-import { Link, useCatch, useLoaderData } from "@remix-run/react";
+import { Link, useCatch, useFetcher, useLoaderData } from "@remix-run/react";
 import { type CatchBoundaryComponent } from "@remix-run/react/dist/routeModules";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 
 export async function loader({ request }: LoaderArgs) {
   const searchSchema = z.object({
-    url: markUrlSchema.nullish().transform((v) => (v === "" ? null : v)),
+    url: z
+      .string()
+      .url()
+      .nullish()
+      .transform((v) => (v === "" ? null : v)),
     text: z.string().nullish(),
   });
 
   const responseSchema = z.object({
-    mark: markSchema,
+    url: z.string().url(),
   });
 
   await requireAuth(request);
@@ -43,42 +45,21 @@ export async function loader({ request }: LoaderArgs) {
   const url = search.data.url || search.data.text || "";
 
   if (/http/.test(url) === false) {
-    throw json({
-      error: {
-        message: `Invalid URL: ${url}`,
+    throw json(
+      {
+        error: {
+          message: `Invalid URL: ${url}`,
+        },
       },
-    });
+      400
+    );
   }
-
-  const requestUrl = new URL(env.LINK_PREVIEW_URL);
-
-  requestUrl.searchParams.set("key", env.LINK_PREVIEW_KEY);
-  requestUrl.searchParams.set("q", decodeURIComponent(url));
 
   return json(
     responseSchema.parse({
-      mark: {
-        url,
-      },
+      url,
     })
   );
-
-  // const response = await fetch(requestUrl);
-  // const parsedResponse = markSchema.safeParse(await response.json());
-
-  // if (parsedResponse.success === false) {
-  //   server.close();
-
-  //   throw
-  // }
-
-  // server.close();
-
-  // return json(
-  //   responseSchema.parse({
-  //     mark: parsedResponse.data,
-  //   })
-  // );
 }
 
 const actionSchema = z.object({
@@ -101,16 +82,23 @@ export async function action({ request }: ActionArgs) {
   const actionRequest = actionSchema.safeParse(formData);
 
   if (actionRequest.success === false) {
-    return json({
-      error: actionRequest.error,
-    });
+    throw json(
+      {
+        error: actionRequest.error,
+      },
+      400
+    );
   }
 
   const { data } = actionRequest;
 
   const domain = new URL(data.link).host.replace(/^www\./, "");
 
-  const tags = data.tags?.split(",")?.map((tag) => tag.trim()) ?? [];
+  const tags =
+    data.tags
+      ?.split(",")
+      ?.map((tag) => tag.trim())
+      .filter(Boolean) ?? [];
 
   await prisma.mark.create({
     data: {
@@ -144,12 +132,31 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function Mark() {
-  const data = useLoaderData<typeof loader>();
+  const { url } = useLoaderData<typeof loader>();
+  const { data, submit, state } = useFetcher<{
+    preview: LinkPreviewResponse;
+  }>();
+
+  const [useImage, setUseImage] = useState(true);
+
+  useEffect(() => {
+    const data = new FormData();
+
+    data.set("intent", "preview");
+    data.set("url", url);
+
+    submit(data, {
+      action: "/mark/actions",
+      method: "post",
+    });
+  }, [url, submit]);
+
+  const isLoading = state !== "idle";
 
   return (
-    <div className="modal modal-open modal-bottom md:modal-middle">
+    <div className="h-screen flex p-4 items-center justify-center overflow-hidden">
       <form
-        className="modal-box md:max-w-lg flex flex-col overflow-hidden p-0 border"
+        className="max-w-2xl flex h-full flex-col overflow-hidden p-0 border"
         action=""
         method="post"
       >
@@ -157,12 +164,13 @@ export default function Mark() {
           <h2 className="font-bold text-xl text-red">New Mark</h2>
           <a
             className="text-xs link"
-            href={data.mark.url}
+            href={url}
             target="_blank"
             rel="noreferrer"
           >
-            {data.mark.url}
+            {url}
           </a>
+          <input type="hidden" name="link" value={url} />
         </div>
 
         <div className="flex-1 grid gap-4 overflow-y-scroll px-4">
@@ -174,9 +182,23 @@ export default function Mark() {
               type="text"
               name="title"
               className="input input-bordered w-full"
-              defaultValue={data.mark.title || ""}
-              autoFocus
+              disabled={isLoading}
+              defaultValue={data?.preview?.title ?? ""}
             />
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-bold">Description</span>
+            </label>
+            <textarea
+              className="textarea textarea-bordered w-full"
+              disabled={isLoading}
+              name="description"
+              value={data?.preview?.description ?? ""}
+              readOnly
+              rows={5}
+            ></textarea>
           </div>
 
           <div className="form-control">
@@ -211,13 +233,30 @@ export default function Mark() {
             <label className="label">
               <span className="label-text font-bold">Thumbnail</span>
             </label>
-            <div className="aspect-video bg-base-300">
-              {data.mark.image ? (
-                <div className="max-w-lg">
-                  <input type="hidden" name="image" value={data.mark.image} />
-                  <img src={data.mark.image} alt={data.mark.title ?? ""} />
-                </div>
+            <div className="aspect-video bg-base-300 relative">
+              {data?.preview.image && useImage ? (
+                <>
+                  <input
+                    type="hidden"
+                    name="image"
+                    value={data.preview.image}
+                  />
+                  <img
+                    src={data.preview.image}
+                    alt={data.preview.title ?? ""}
+                  />
+                </>
               ) : null}
+
+              <div className="absolute left-0 top-0 w-full h-full flex p-2 justify-end">
+                <button
+                  className="btn btn-xs"
+                  type="button"
+                  onClick={() => setUseImage(false)}
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           </div>
         </div>

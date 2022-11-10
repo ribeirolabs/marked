@@ -19,3 +19,7 @@
     @apply font-black;
   }
 }
+
+[data-loading="true"] {
+  @apply loading opacity-50 pointer-events-none;
+}

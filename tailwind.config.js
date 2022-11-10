@@ -18,7 +18,8 @@ module.exports = {
         dark: {
           ...theme,
           primary: "#138cd2",
-          "primary-content": "white",
+          "primary-content": "#000",
+          neutral: "#111",
           "--rounded-box": "0.5rem",
           // secondary: theme.neutral,
           // "secondary-content": theme["neutral-content"],
