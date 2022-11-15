@@ -100,13 +100,14 @@ function Mark({
           <p className="text-sm my-3 line-clamp-3">{mark.description}</p>
         ) : null}
 
-        <div className="flex gap-1 pt-3 items-center">
-          <span className="text-sm">Tags:</span>
-
+        <div className="flex gap-2 pt-3 items-center">
           {mark.tags.length > 0 ? (
             mark.tags.map((tag) => (
-              <span key={tag.id} className="badge badge-primary font-bold">
-                #{tag.name}
+              <span
+                key={tag.id}
+                className="btn btn-xs lowercase rounded-full px-3 font-bold font-mono"
+              >
+                {tag.name.replace(/\s/g, "-")}
               </span>
             ))
           ) : (
