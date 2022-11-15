@@ -78,7 +78,7 @@ const actionSchema = z.object({
 export async function action({ request }: ActionArgs) {
   const session = await requireAuth(request);
 
-  const formData = Object.fromEntries((await request.formData()).entries());
+  const formData = Object.fromEntries(await request.formData());
   const actionRequest = actionSchema.safeParse(formData);
 
   if (actionRequest.success === false) {
@@ -154,9 +154,9 @@ export default function Mark() {
   const isLoading = state !== "idle";
 
   return (
-    <div className="h-screen flex p-4 items-center justify-center overflow-hidden">
+    <div className="h-screen w-full flex p-4 items-center justify-center overflow-hidden">
       <form
-        className="max-w-2xl flex h-full flex-col overflow-hidden p-0 border"
+        className="w-full md:w-3/4 lg:w-1/2 xl:w-1/3 flex h-full flex-col overflow-hidden p-0 border"
         action=""
         method="post"
       >

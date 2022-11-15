@@ -11,14 +11,14 @@ module.exports = {
       },
     },
   },
-  plugins: [require("daisyui")],
+  plugins: [require("@tailwindcss/line-clamp"), require("daisyui")],
   daisyui: {
     themes: [
       {
         dark: {
           ...theme,
           primary: "#138cd2",
-          "primary-content": "#000",
+          "primary-content": "black",
           neutral: "#111",
           "--rounded-box": "0.5rem",
           // secondary: theme.neutral,

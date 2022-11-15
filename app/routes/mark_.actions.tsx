@@ -19,7 +19,7 @@ const requestSchema = deleteRequestSchema.or(previewRequestSchema);
 export async function action({ request }: ActionArgs) {
   await requireAuth(request);
 
-  const requestData = Object.fromEntries((await request.formData()).entries());
+  const requestData = Object.fromEntries(await request.formData());
   const safeRequest = requestSchema.safeParse(requestData);
 
   if (safeRequest.success === false) {

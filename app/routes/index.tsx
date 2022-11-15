@@ -72,7 +72,7 @@ function Mark({
   return (
     <div
       key={mark.id}
-      className="card w-full border rounded-md"
+      className="card w-full border rounded-md overflow-hidden"
       data-loading={deleteFetcher.state !== "idle"}
     >
       <div className="p-4">
@@ -97,7 +97,7 @@ function Mark({
         </div>
 
         {mark.description ? (
-          <p className="text-sm my-3">{mark.description}</p>
+          <p className="text-sm my-3 line-clamp-3">{mark.description}</p>
         ) : null}
 
         <div className="flex gap-1 pt-3 items-center">
@@ -105,8 +105,8 @@ function Mark({
 
           {mark.tags.length > 0 ? (
             mark.tags.map((tag) => (
-              <span key={tag.id} className="badge badge-primary">
-                {tag.name}
+              <span key={tag.id} className="badge badge-primary font-bold">
+                #{tag.name}
               </span>
             ))
           ) : (
