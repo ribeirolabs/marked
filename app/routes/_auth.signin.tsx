@@ -1,11 +1,29 @@
-import { auth, authRoutes } from "@/services/auth.server";
-import type { LoaderFunction } from "@remix-run/node";
+import { auth } from "@/services/auth.server";
+import {
+  destroySession,
+  getSession,
+  SESSION_NAME,
+} from "@/services/session.server";
+import { getUserById } from "@/services/user.server";
+import { json, LoaderFunction, redirect } from "@remix-run/node";
 import { Form, useTransition } from "@remix-run/react";
 
-export const loader: LoaderFunction = ({ request }) => {
-  return auth(request).isAuthenticated(request, {
-    successRedirect: authRoutes.success,
-  });
+export const loader: LoaderFunction = async ({ request }) => {
+  const session = await auth(request).isAuthenticated(request);
+
+  if (session != null) {
+    const user = await getUserById(session.userId);
+
+    if (user == null) {
+      return redirect(request.url, {
+        headers: {
+          "Set-Cookie": await destroySession(await getSession(SESSION_NAME)),
+        },
+      });
+    }
+  }
+
+  return json({});
 };
 
 export default function SignIn() {

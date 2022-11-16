@@ -1,12 +1,13 @@
 import { requireAuth } from "@/services/auth.server";
 import { prisma } from "@/services/db.server";
+import { requireUser } from "@/services/user.server";
 import type { LoaderArgs, SerializeFrom } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Outlet, useFetcher, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useFetcher, useLoaderData } from "@remix-run/react";
 import { HTMLProps, PropsWithChildren } from "react";
 
 export async function loader({ request }: LoaderArgs) {
-  const { userId } = await requireAuth(request);
+  const user = await requireUser(request);
 
   const marks = await prisma.mark.findMany({
     select: {
@@ -24,7 +25,7 @@ export async function loader({ request }: LoaderArgs) {
       link: true,
     },
     where: {
-      ownerId: userId,
+      ownerId: user.id,
     },
     orderBy: {
       createdAt: "desc",
@@ -32,14 +33,23 @@ export async function loader({ request }: LoaderArgs) {
     take: 5,
   });
 
-  return json({ marks });
+  return json({ marks, user });
 }
 
 export default function Index() {
-  const { marks } = useLoaderData<typeof loader>();
+  const { marks, user } = useLoaderData<typeof loader>();
 
   return (
     <div className="p-4">
+      <header className="flex justify-between items-center border-b pb-2 mb-4">
+        <h2 className="font-bold text-xl">r / marked</h2>
+        <div className="flex flex-col gap-2 items-end">
+          <p className="text-xs">{user.email}</p>
+          <Link className="btn btn-sm" to="/auth/signout">
+            Sign out
+          </Link>
+        </div>
+      </header>
       <h2 className="font-bold text-xl">Latest</h2>
 
       <div className="max-w-lg grid gap-5">

@@ -1,9 +1,11 @@
 import { env } from "@/services/env.server";
 import { createCookieSessionStorage } from "@remix-run/node";
 
+export const SESSION_NAME = "@app/session";
+
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
-    name: "@app/session",
+    name: SESSION_NAME,
     sameSite: "lax",
     path: "/",
     httpOnly: true,
