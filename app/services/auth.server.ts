@@ -1,7 +1,11 @@
 import { randomUUID } from "crypto";
 import { Authenticator } from "remix-auth";
 import { GoogleStrategy } from "remix-auth-google";
-import { sessionStorage } from "@/services/session.server";
+import {
+  destroySession,
+  getSession,
+  sessionStorage,
+} from "@/services/session.server";
 import { env } from "@/services/env.server";
 import { prisma } from "./db.server";
 import type { Session } from "@prisma/client";
@@ -110,7 +114,13 @@ export const logout = async (request: Request) => {
     ]);
   }
 
-  return redirect("/signin");
+  return redirect("/signin", {
+    headers: {
+      "Set-Cookie": await destroySession(
+        await getSession(request.headers.get("cookie"))
+      ),
+    },
+  });
 };
 
 export const requireAuth = (request: Request) =>

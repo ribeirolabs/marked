@@ -4,13 +4,13 @@
 
 @layer base {
   html {
-    /* font-family: "JetBrains Mono", monospace; */
+    font-family: "Roboto";
   }
 }
 
 @layer components {
   .btn {
-    @apply font-black no-animation;
+    @apply font-black no-animation letter-spacing-2;
   }
 }
 

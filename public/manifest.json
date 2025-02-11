@@ -15,12 +15,12 @@
     }
   ],
   "share_target": {
-    "action": "/mark",
+    "action": "/mark/add",
     "method": "GET",
     "params": {
       "title": "title",
       "text": "text",
-      "url": "url"
+      "url": "link"
     }
   },
   "protocol_handlers": [

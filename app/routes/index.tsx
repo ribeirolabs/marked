@@ -1,10 +1,9 @@
-import { requireAuth } from "@/services/auth.server";
 import { prisma } from "@/services/db.server";
 import { requireUser } from "@/services/user.server";
 import type { LoaderArgs, SerializeFrom } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, Outlet, useFetcher, useLoaderData } from "@remix-run/react";
-import { HTMLProps, PropsWithChildren } from "react";
+import type { HTMLProps, PropsWithChildren } from "react";
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireUser(request);
